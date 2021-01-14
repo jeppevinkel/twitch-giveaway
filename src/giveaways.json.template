@@ -1,0 +1,8 @@
+[
+  {
+    "keyword": "test",
+    "winnerMessages": ["game-key-here-or-whatever"],
+    "giveawayTime": 120,
+    "activated": false
+  }
+]

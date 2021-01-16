@@ -39,16 +39,10 @@ const run = async () => {
         onAuthenticationFailure
     });
     await chat.connect();
+
     await chat.join(Config.channel);
 
-    //await chat.broadcast("Connected...");
-
-    await chat.send("PRIVMSG #jopodev :/me casually enters the chat...");
-    //await chat.send("PRIVMSG #jeppegiveaways :/w \"+jeppevinkel+\" testing again...");
-    //await chat.whisper("jeppevinkel", "Test message ok?");
-    //await chat.send("send_message(\"WHISPER #jeppegiveaways :/w \"+jeppevinkel+\" This is an example PM\")").then(data => console.log(data)).catch(err => console.log(err));
-
-    //console.log(Giveaways);
+    await chat.me(Config.channel, "casually enters the chat...");
 
     chat.on('PRIVMSG', data => {
         if (!data.message) return;
@@ -70,8 +64,8 @@ const run = async () => {
         console.log(activeGiveaways);
     });
 
-    chat.on('WHISPR', data => {
-        console.log(data);
+    chat.on('WHISPER', data => {
+        console.log(`(whisper) ${data.tags.displayName}: ${data.message}`);
     })
 
     function endGiveaway(giveaway: {keyword: string, winnerMessages: string[], giveawayTime: number, activated: boolean}) {
@@ -91,11 +85,11 @@ const run = async () => {
             rewards--;
         }
 
-        chat.say(Config.channel, "The winner(s) were " + winners.join(" and ") + "!");
+        chat.say(Config.channel, "The winner(s) are " + winners.join(" and ") + "!");
 
         for (let i = 0; i < winners.length; i++) {
             console.log("Sending message to winner. (" + winners[i] + ")");
-            chat.whisper(winners[i], giveaway.winnerMessages[i]);
+            chat.send(`PRIVMSG jtv :/w ${winners[i]} ${giveaway.winnerMessages[i]}`);
         }
 
         activeGiveaways.delete(giveaway.keyword);

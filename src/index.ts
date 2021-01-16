@@ -10,6 +10,7 @@ const loggerOptions = {
 };
 
 const activeGiveaways: Map<string, string[]> = new Map<string, string[]>();
+const winnerMessages: string[] = [];
 
 const run = async () => {
     const tokenData = JSON.parse(await fs.readFile('./tokens.json', 'utf-8'));
@@ -88,9 +89,12 @@ const run = async () => {
         chat.say(Config.channel, "The winner(s) are " + winners.join(" and ") + "!");
 
         for (let i = 0; i < winners.length; i++) {
-            console.log("Sending message to winner. (" + winners[i] + ")");
+            console.log("Sending message to winner. (" + winners[i] + "): " + giveaway.winnerMessages[i]);
+            winnerMessages.push(winners[i] + ": " + giveaway.winnerMessages[i]);
             chat.send(`PRIVMSG jtv :/w ${winners[i]} ${giveaway.winnerMessages[i]}`);
         }
+
+        fs.writeFile('./winners.json', JSON.stringify(winnerMessages, null, 4), 'utf-8');
 
         activeGiveaways.delete(giveaway.keyword);
     }

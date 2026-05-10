@@ -1,4 +1,6 @@
-import TwitchJS from 'twitch-js';
+// import TwitchJS from 'twitch-js';
+import {Chat, Api} from 'twitch-js';
+import {Message, Messages, PrivateMessage, RoomStateTags, UserStateTags} from "twitch-js/lib";
 import { RefreshableAuthProvider, StaticAuthProvider } from 'twitch-auth';
 import { promises as fs } from 'fs';
 import * as Config from './config.json';
@@ -33,7 +35,7 @@ const run = async () => {
 
     const onAuthenticationFailure = () => authProvider.refresh().then(token => token.accessToken);
 
-    const chat = new TwitchJS.Chat({
+    const chat = new Chat({
         log: loggerOptions,
         username: Config.clientUsername,
         token: tokenData.accessToken,
@@ -53,6 +55,7 @@ const run = async () => {
             if (data.message == giveaway.keyword) {
                 if (!giveaway.activated) {
                     giveaway.activated = true;
+                    chat.broadcast(`Giveaway has been started. Write '${giveaway.keyword}' to enter!`);
                     setTimeout(endGiveaway, giveaway.giveawayTime * 1000, giveaway);
                 }
                 let giveawayUsers = (activeGiveaways.get(giveaway.keyword) ? activeGiveaways.get(giveaway.keyword) : []);
